@@ -209,6 +209,21 @@ resource "kubernetes_daemonset" "datadog_agent" {
           }
 
           env {
+            name = "DD_LOGS_ENABLED"
+            value = var.datadog_agent_options_logs_enabled
+          }
+
+          env {
+            name = "DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL"
+            value = var.datadog_agent_options_logs_enabled
+          }
+
+          env {
+            name = "DD_CONTAINER_EXCLUDE_LOGS"
+            value = "name:datadog-agent"
+          }
+
+          env {
             name = "DD_KUBERNETES_KUBELET_HOST"
             value_from {
               field_ref {
@@ -266,6 +281,12 @@ resource "kubernetes_daemonset" "datadog_agent" {
             mount_path = "/var/lib/docker/containers"
           }
 
+          volume_mount {
+            count = var.datadog_agent_options_logs_enabled ? 1 : 0
+            name = "pointerdir"
+            mount_path = "/opt/datadog-agent/run"
+          }
+
           liveness_probe {
             http_get {
               path = "/health"
@@ -319,6 +340,14 @@ resource "kubernetes_daemonset" "datadog_agent" {
           name = "logcontainerpath"
           host_path {
             path = "/var/lib/docker/containers"
+          }
+        }
+
+        volume {
+          count = var.datadog_agent_options_logs_enabled ? 1 : 0
+          name = "pointerdir"
+          host_path {
+            path = "/var/run/datadog-agent"
           }
         }
 

@@ -87,6 +87,7 @@ spec:
           ## logs directory, or remove this configuration if `/var/log/pods`
           ## is not a symlink to any other directory.
           - {name: logcontainerpath, mountPath: /var/lib/docker/containers}
+          - {name: pointerdir, mountPath: /opt/datadog-agent/run}
         livenessProbe:
           httpGet:
             path: /health
@@ -106,3 +107,4 @@ spec:
         ## logs directory, or remove this configuration if `/var/log/pods`
         ## is not a symlink to any other directory.
         - {name: logcontainerpath, hostPath: {path: /var/lib/docker/containers}}
+        - {name: pointerdir, hostPath: {path: /var/run/datadog-agent}}
